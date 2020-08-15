@@ -15,7 +15,7 @@ class TriviaTestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "trivia_test"
-        self.database_path = "postgres://postgres:mido2210@{}/{}".format(
+        self.database_path = "postgres://postgres:123@{}/{}".format(
             'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
 
@@ -34,8 +34,8 @@ class TriviaTestCase(unittest.TestCase):
             }
 
             self.play_quizzes_input = {
-                'previous_questions': [],
-                'quiz_category': {'type': 'Art', 'id': 2}
+                "previous_questions": [],
+                "quiz_category": {"type": "History", "id": 4}
             }
 
     def tearDown(self):
@@ -86,14 +86,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
 
     def test_delete_question(self):
-        res = self.client().delete('/questions/16')
+        res = self.client().delete('/questions/15')
         data = json.loads(res.data)
 
         question = Question.query.filter(
-            Question.id == 16).one_or_none()
+            Question.id == 15).one_or_none()
 
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['deleted'], 16)
+        self.assertEqual(data['deleted'], 15)
 
     def test_422_if_question_does_not_exist(self):
         res = self.client().delete('/questions/100')
@@ -107,8 +107,6 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        
-        
 
     def test_405_if_add_question_not_allowed(self):
         res = self.client().post('/questions/100', json=self.new_question)
@@ -131,7 +129,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Bad request')
+        self.assertEqual(data['message'], 'Bad Request')
 
     def test_questions_category(self):
         res = self.client().get('/categories/4/questions')
@@ -139,7 +137,6 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        
 
     def test_422_if_category_does_not_exist(self):
         res = self.client().get('/categories/8/questions')
@@ -147,7 +144,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Unable to process request')
+        self.assertEqual(data['message'], 'Unable To Process Request')
 
     def test_play_quizzes(self):
         res = self.client().post('/quizzes', json=self.play_quizzes_input)
@@ -157,13 +154,13 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['success'], True)
 
     def test_400_if_no_category_id(self):
-        res = self.client().post('/quizzes', json={"quiz_category": "Art"})
+        res = self.client().post(
+            '/quizzes', json={"quiz_category": {"type": "Art", "id": 0}})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Bad request')
-
+        self.assertEqual(data['message'], 'Bad Request')
 
         # Make the tests conveniently executable
 if __name__ == "__main__":
