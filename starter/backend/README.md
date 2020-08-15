@@ -539,7 +539,7 @@ GET '/categories/<int:category_id>/questions'
 POST '/quizzes'
 - get questions to play the quiz with random questions based on the given category and the random question is not one of the previous questions.
 - Request Arguments: None.
-- Request Body: previous_questions and quiz_category for example: {"previous_questions": [], "quiz_category": {"type": "Art", "id": 4}}.
+- Request Body: previous_questions and quiz_category for example: {"previous_questions": [], "quiz_category": {"type": "History", "id": 4}}.
 - Returns: A random question in specific category and success. 
 
 {
